@@ -1,5 +1,6 @@
-from utils import Action, ActionType, Cell, Condition
 
+from utils import Action, ActionType, Cell, Condition
+import random
 
 class Agent:
     def __init__(self, game):
@@ -76,4 +77,18 @@ class RuleBasedAgent(Agent):
 
     def get_next_action(self, obs):
         ### IMPLEMENT THIS ###
-        raise NotImplementedError("Please implement your rule-based agent")
+        # 1. Look for certain patterns in revealed integer cells
+        """
+        A minimal approach:
+        1) Scan from top-left to bottom-right.
+        2) Reveal the first cell that is still unrevealed.
+        3) If everything is revealed, return a fallback action.
+        """
+        for x in range(self.size):
+            for y in range(self.size):
+                if obs[x][y] == Cell.UNREVEALED:
+                    # Reveal the first unrevealed cell we find
+                    return Action(ActionType.REVEAL, x, y)
+
+        # Fallback if no unrevealed cells remain
+        return Action(ActionType.REVEAL, 0, 0)

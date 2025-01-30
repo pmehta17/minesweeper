@@ -18,6 +18,12 @@ class Minesweeper:
 
         # The actual bomp map, you should not access this variable and read from it
         self.__board = bomb_map if bomb_map else create_random_board(size, bombs)
+
+        ## debugging: checking bomb map
+        print("DEBUG: Bomb Map (self.__board):")
+        self.print_board()
+        print(f"Size: {self.size}")
+
         # For GUI purposes, you do not need to access and modify these variables.
         self.last_action = None  # Track the last revealed cell (x, y)
         self.gui = gui
@@ -89,7 +95,6 @@ class Minesweeper:
             elif condition == Condition.WIN:
                 print("Congratulations! You win!")
         return self.obs(), condition
-    
     def goal_test(self):
         """
         Tests the current state of the game to determine if the goal has been reached.
@@ -101,8 +106,24 @@ class Minesweeper:
                 - Condition.WIN: If all non-bomb cells have been revealed.
         """
         ### IMPLEMENT THIS ###
-        raise NotImplementedError("Please implement the goal test function.")
-    
+        # raise NotImplementedError("Please implement the goal test function.")
+
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.revealed_board[x][y] == Cell.REVEALED_BOMB:
+                    return Condition.BOMB
+
+        # Check if all non-bomb cells have been revealed
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.__board[x][y] != 'B':  # This is a safe cell
+                    # If it's not revealed (int) yet, or if it is flagged, game is still not won
+                    if self.revealed_board[x][y] in [Cell.UNREVEALED, Cell.FLAGGED]:
+                        return Condition.IN_PROGRESS
+
+        # Otherwise, all safe cells are revealed
+        return Condition.WIN
+
     def print_board(self):
         """
         Prints the current state of the Minesweeper board.
